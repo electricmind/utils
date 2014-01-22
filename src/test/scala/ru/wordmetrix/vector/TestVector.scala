@@ -2,7 +2,7 @@ package ru.wordmetrix.vector
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
-import ru.wordmetrix.webcrawler._
+
 import ru.wordmetrix.vector.Vector
 class TestVector extends FlatSpec with Matchers {
     "A vector" should "be created" in {

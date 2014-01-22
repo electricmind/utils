@@ -1,29 +1,55 @@
 package ru.wordmetrix.vector
 import scala.collection.TraversableProxy
 import scala.math.Ordering.StringOrdering
+import scala.collection.Traversable
 
 object Vector {
-
     def apply[F](list: List[(F, Double)])(implicit ord: Ordering[F]) =
-        new Vector(
+        new VectorList(
             list.groupBy(_._1).map({ case (x, y) => x -> y.map(_._2).sum }).toList.sortBy(_._1)
         )
-    def apply[F](pairs: (F, Double)*)(implicit ord: Ordering[F]): Vector[F] = apply(pairs.toList)
+    def apply[F](pairs: (F, Double)*)(implicit ord: Ordering[F]): VectorList[F] = apply(pairs.toList)
 }
 
-class Vector[F](val self: List[(F, Double)])(implicit accuracy: Double = 0.0001, ord: Ordering[F]) extends TraversableProxy[(F, Double)] with Serializable {
+abstract trait Vector[F] extends Traversable[(F, Double)] {
+    val self: List[(F, Double)]
+    
+    def +(v: Vector[F]) : Vector[F]
+
+    def -(v: Vector[F]) : Vector[F]
+
+    def *(v: Vector[F]) : Double
+
+    def *(z: Double) : Vector[F]
+    
+    def /(z: Double) : Vector[F]
+    
+    val sqr : Double
+    val norm : Double
+
+    val normal : Vector[F]
+
+    def clearRandomly(n: Int) : Vector[F] 
+    
+    def clearMinors(n: Int) : Vector[F]
+}
+
+class VectorList[F](val self: List[(F, Double)])(
+    implicit accuracy: Double = 0.0001,
+    ord: Ordering[F]) extends TraversableProxy[(F, Double)]
+        with Serializable with Vector[F]{
     type Pair = (F, Double)
     type Pairs = List[Pair]
 
     //Vector[Int]()
-    
+
     def this()(implicit accuracy: Double = 0.0001, ord: Ordering[F]) = this(List())
 
-    def +(v: Vector[F]) = new Vector(pairs(self, v.self).map({
+    def +(v: Vector[F]) = new VectorList(pairs(self, v.self).map({
         case (f, (d0, d1)) => (f, d0 + d1)
     }).filter(filter)) //.sortBy(_._1))
 
-    def -(v: Vector[F]) = new Vector(pairs(self, v.self).map({
+    def -(v: Vector[F]) = new VectorList(pairs(self, v.self).map({
         case (f, (d0, d1)) => (f, d0 - d1)
     }).filter(filter)) //.sortBy(_._1))
 
@@ -49,19 +75,18 @@ class Vector[F](val self: List[(F, Double)])(implicit accuracy: Double = 0.0001,
 
     def *(z: Double) = {
         //println(z)
-        new Vector(map({ case (x, y) => (x, y * z) }).toList)
+        new VectorList(map({ case (x, y) => (x, y * z) }).toList)
     }
 
     def /(z: Double) = {
-        new Vector(map({ case (x, y) => (x, y / z) }).toList)
+        new VectorList(map({ case (x, y) => (x, y / z) }).toList)
     }
 
     lazy val sqr = map(_._2).map(Math.pow(_, 2)).sum
     val norm = Math.pow(sqr, 0.5)
-    
+
     //def 
-    lazy val 
-    normal = {
+    lazy val normal = {
         this / norm
     }
 
@@ -78,7 +103,7 @@ class Vector[F](val self: List[(F, Double)])(implicit accuracy: Double = 0.0001,
             case (rs, vector) => outcome.reverse.drop(rs.length) ++ vector
         }
 
-        new Vector(
+        new VectorList(
             clear((1 to (length - n)).map(
                 x => scala.util.Random.nextInt(length)
             ).toList.sorted, self, 0, List())
@@ -87,5 +112,6 @@ class Vector[F](val self: List[(F, Double)])(implicit accuracy: Double = 0.0001,
 
     def clearMinors(n: Int) = if (n < self.length) Vector(
         self.sortBy(x => Math.abs(x._2)).takeRight(n)
-    ) else this
+    )
+    else this
 }

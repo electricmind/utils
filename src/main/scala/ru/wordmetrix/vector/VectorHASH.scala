@@ -18,19 +18,19 @@ class VectorHASH[F](val self: HashMap[F, Double])(
     ord: Ordering[F]) extends MapProxy[F, Double]
         with Serializable with Vector[F] {
 
-    def +(v: Vector[F]): Vector[F] =
-        new VectorHASH[F](HashMap[F, Double](
-            (for {
-                (key, value) <- v
-                sv <- self.get(key)
-                nv <- Option(sv + value)
-                if abs(nv) > accuracy
-            } yield {
-                key -> nv
-            }).toSeq: _*
-        ))
-
-    def -(v: Vector[F]): Vector[F] = new VectorHASH[F](HashMap[F, Double](
+    def +(v: Vector[F]): Vector[F] = new VectorHASH[F](
+        (for {
+            (key, value) <- v
+            sv <- self.get(key)
+            nv <- Option(sv + value)
+            if abs(nv) > accuracy
+        } yield {
+            key -> nv
+        }).foldLeft(HashMap[F, Double]()) {
+            case (map, item) => map + item
+        }
+    )
+    def -(v: Vector[F]): Vector[F] = new VectorHASH[F](
         (for {
             (key, value) <- v
             sv <- self.get(key)
@@ -38,8 +38,10 @@ class VectorHASH[F](val self: HashMap[F, Double])(
             if abs(nv) > accuracy
         } yield {
             key -> nv
-        }).toSeq: _*
-    ))
+        }).foldLeft(HashMap[F, Double]()) {
+            case (map, item) => map + item
+        }
+    )
 
     def *(v: Vector[F]): Double =
         (for {
@@ -49,7 +51,7 @@ class VectorHASH[F](val self: HashMap[F, Double])(
             sv * value
         }).reduceOption(_ + _) getOrElse 0.0
 
-    def *(z: Double): Vector[F] = new VectorHASH[F](HashMap[F, Double](
+    def *(z: Double): Vector[F] = new VectorHASH[F](
         (for {
             (key, value) <- self
             nv <- value * z match {
@@ -58,8 +60,10 @@ class VectorHASH[F](val self: HashMap[F, Double])(
             }
         } yield {
             key -> value * z
-        }) toSeq: _*
-    ))
+        }).foldLeft(HashMap[F, Double]()) {
+            case (map, item) => map + item
+        }
+    )
 
     def /(z: Double): Vector[F] = this * (1 / z)
 

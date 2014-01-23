@@ -32,7 +32,6 @@ class VectorHASH[F](val self: HashMap[F, Double])(
             nv <- Option(sv + value)
             //if abs(nv) > accuracy
         } yield {
-            println(s"key $key -> $nv")
             key -> nv
         }).foldLeft(self) {
             case (map, item) if abs(item._2) > accuracy => map + item

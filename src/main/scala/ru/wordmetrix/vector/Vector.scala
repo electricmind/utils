@@ -7,10 +7,12 @@ abstract class VectorFactory {
     def factory[F](list: List[(F, Double)])(
         implicit ord: Ordering[F]): Vector[F]
 
-    def apply[F](list: List[(F, Double)])(implicit ord: Ordering[F]): Vector[F] =
-        factory(
+    def apply[F](list: List[(F, Double)])(implicit ord: Ordering[F]): Vector[F] = {
+        val f = factory(
             list.groupBy(_._1).map({ case (x, y) => x -> y.map(_._2).sum }).toList.sortBy(_._1)
         )
+        f
+    }
     def apply[F](pairs: (F, Double)*)(implicit ord: Ordering[F]): Vector[F] = apply(pairs.toList)
 }
 

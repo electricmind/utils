@@ -7,10 +7,15 @@ import scala.collection.immutable.MapProxy
 
 object VectorHASH extends VectorFactory {
     def factory[F](list: List[(F, Double)])(
-        implicit ord: Ordering[F]): Vector[F] =
-        new VectorHASH[F](
-            HashMap[F, Double](list.map({ case (x, y) => x -> y }): _*)
+        implicit ord: Ordering[F]): Vector[F] = {
+        val m = list.foldLeft(HashMap[F, Double]()) {
+            case (map, item) => map + item
+        }
+        val f = new VectorHASH[F](
+            m
         )
+        f
+    }
 }
 
 class VectorHASH[F](val self: HashMap[F, Double])(
@@ -18,28 +23,33 @@ class VectorHASH[F](val self: HashMap[F, Double])(
     ord: Ordering[F]) extends MapProxy[F, Double]
         with Serializable with Vector[F] {
 
-    def +(v: Vector[F]): Vector[F] = new VectorHASH[F](
+    def +(v: Vector[F]): Vector[F] = {
+        new VectorHASH[F](
+    
         (for {
             (key, value) <- v
-            sv <- self.get(key)
+            sv <-  self.get(key) orElse Some(0.0) 
             nv <- Option(sv + value)
-            if abs(nv) > accuracy
+            //if abs(nv) > accuracy
         } yield {
+            println(s"key $key -> $nv")
             key -> nv
-        }).foldLeft(HashMap[F, Double]()) {
-            case (map, item) => map + item
-        }
-    )
+        }).foldLeft(self) {
+            case (map, item) if abs(item._2) > accuracy => map + item
+            case (map, item) => map - item._1
+        }   
+    )}
     def -(v: Vector[F]): Vector[F] = new VectorHASH[F](
         (for {
             (key, value) <- v
-            sv <- self.get(key)
+            sv <- self.get(key) orElse Some(0.0)
             nv <- Option(sv - value)
-            if abs(nv) > accuracy
+            //if abs(nv) > accuracy
         } yield {
             key -> nv
-        }).foldLeft(HashMap[F, Double]()) {
-            case (map, item) => map + item
+        }).foldLeft(self) {
+            case (map, item) if abs(item._2) > accuracy => map + item
+            case (map, item) => map - item._1
         }
     )
 
@@ -67,13 +77,15 @@ class VectorHASH[F](val self: HashMap[F, Double])(
 
     def /(z: Double): Vector[F] = this * (1 / z)
 
-    lazy val sqr: Double = self.map(_._2).reduceOption(_ * _) getOrElse 0
+    lazy val sqr: Double = {
+        self.map({case  (x,y) => y*y}).reduceOption(_ + _) getOrElse  0 
+    }
     lazy val norm: Double = sqrt(sqr)
-    val normal: Vector[F] = this / norm
+    lazy val normal: Vector[F] = this / norm
 
     //TODO : clearRandomly
-    def clearRandomly(n: Int): Vector[F] = this
+    def clearRandomly(n: Int): VectorHASH[F] = this
 
     //TODO : clearMinors
-    def clearMinors(n: Int): Vector[F] = this
+    def clearMinors(n: Int): VectorHASH[F] = this
 }

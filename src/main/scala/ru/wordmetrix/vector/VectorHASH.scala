@@ -57,14 +57,14 @@ class VectorHASH[F](val self: HashMap[F, Double])(
                 case _                 => None
             }
         } yield {
-            key -> value / z
+            key -> value * z
         }) toSeq: _*
     ))
 
     def /(z: Double): Vector[F] = this * (1 / z)
 
-    val sqr: Double = self.map(_._2).reduceOption(_ * _) getOrElse 0
-    val norm: Double = sqrt(sqr)
+    lazy val sqr: Double = self.map(_._2).reduceOption(_ * _) getOrElse 0
+    lazy val norm: Double = sqrt(sqr)
     val normal: Vector[F] = this / norm
 
     //TODO : clearRandomly

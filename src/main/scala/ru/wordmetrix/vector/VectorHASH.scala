@@ -25,19 +25,20 @@ class VectorHASH[F](val self: HashMap[F, Double])(
 
     def +(v: Vector[F]): Vector[F] = {
         new VectorHASH[F](
-    
-        (for {
-            (key, value) <- v
-            sv <-  self.get(key) orElse Some(0.0) 
-            nv <- Option(sv + value)
-            //if abs(nv) > accuracy
-        } yield {
-            key -> nv
-        }).foldLeft(self) {
-            case (map, item) if abs(item._2) > accuracy => map + item
-            case (map, item) => map - item._1
-        }   
-    )}
+
+            (for {
+                (key, value) <- v
+                sv <- self.get(key) orElse Some(0.0)
+                nv <- Option(sv + value)
+                //if abs(nv) > accuracy
+            } yield {
+                key -> nv
+            }).foldLeft(self) {
+                case (map, item) if abs(item._2) > accuracy => map + item
+                case (map, item)                            => map - item._1
+            }
+        )
+    }
     def -(v: Vector[F]): Vector[F] = new VectorHASH[F](
         (for {
             (key, value) <- v
@@ -48,7 +49,7 @@ class VectorHASH[F](val self: HashMap[F, Double])(
             key -> nv
         }).foldLeft(self) {
             case (map, item) if abs(item._2) > accuracy => map + item
-            case (map, item) => map - item._1
+            case (map, item)                            => map - item._1
         }
     )
 
@@ -64,8 +65,8 @@ class VectorHASH[F](val self: HashMap[F, Double])(
         (for {
             (key, value) <- self
             nv <- value * z match {
-                case x if x > accuracy => Option(x)
-                case _                 => None
+                case x if abs(x) > accuracy => Option(x)
+                case _                      => None
             }
         } yield {
             key -> value * z
@@ -77,7 +78,7 @@ class VectorHASH[F](val self: HashMap[F, Double])(
     def /(z: Double): Vector[F] = this * (1 / z)
 
     lazy val sqr: Double = {
-        self.map({case  (x,y) => y*y}).reduceOption(_ + _) getOrElse  0 
+        self.map({ case (x, y) => y * y }).reduceOption(_ + _) getOrElse 0
     }
     lazy val norm: Double = sqrt(sqr)
     lazy val normal: Vector[F] = this / norm
@@ -87,4 +88,15 @@ class VectorHASH[F](val self: HashMap[F, Double])(
 
     //TODO : clearMinors
     def clearMinors(n: Int): VectorHASH[F] = this
+
+    def clear(accuracy: Double = accuracy) = new VectorHASH[F](
+        (for {
+            (key, value) <- self
+            if abs(value) < accuracy
+        } yield {
+            key
+        }).foldLeft(self) {
+            case (map, item) => map - item
+        }
+    )
 }

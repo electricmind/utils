@@ -88,4 +88,6 @@ class VectorList[F](val self: List[(F, Double)])(
         self.sortBy(x => Math.abs(x._2)).takeRight(n)
     )
     else this
+    
+    def clear(accuracy : Double) : Vector[F] = ???
 }

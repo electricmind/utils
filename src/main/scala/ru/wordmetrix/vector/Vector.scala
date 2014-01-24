@@ -45,5 +45,7 @@ abstract trait Vector[F] extends Traversable[(F, Double)] {
     def clearRandomly(n: Int): Vector[F]
 
     def clearMinors(n: Int): Vector[F]
+    
+    def clear(accuracy: Double) :Vector[F]
 }
 

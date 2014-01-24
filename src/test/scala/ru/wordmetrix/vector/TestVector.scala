@@ -1,20 +1,21 @@
 package ru.wordmetrix.vector
 
-import org.scalacheck._
+import java.lang.Math.abs
 
-import Arbitrary._
-import Gen._
-import Prop._
-import Math._
-import org.scalautils._
-import Tolerance._
-import TripleEquals._
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.arbDouble
+import org.scalacheck.Gen
+import org.scalacheck.Prop.{ forAll, propBoolean }
+import org.scalacheck.Properties
+import org.scalautils.Equality
+import org.scalautils.Tolerance.convertNumericToPlusOrMinusWrapper
+import org.scalautils.TripleEquals.convertToEqualizer
 
 abstract class TestVector extends Properties("Vector") {
 
     implicit val accuracy: Double = 0.001
     implicit def VS: Arbitrary[Vector[Int]]
-    val empty : Vector[Int]
+    val empty: Vector[Int]
 
     implicit class VectorCheck(v1: Vector[Int]) {
         def compare(v2: Vector[Int])(implicit accuracy: Double) =

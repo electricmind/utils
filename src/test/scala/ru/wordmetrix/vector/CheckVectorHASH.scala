@@ -1,17 +1,9 @@
 package ru.wordmetrix.vector
 
-import org.scalacheck._
-
-import Arbitrary._
-import Gen._
-import Prop._
-import Math._
-import org.scalautils._
-import Tolerance._
-import TripleEquals._
+import org.scalacheck.{ Arbitrary, Gen }
 
 object ChechVectorHASH extends TestVector {
-     val empty : Vector[Int]  = VectorHASH.empty[Int]
+    val empty: Vector[Int] = VectorHASH.empty[Int]
 
     implicit def VS = Arbitrary[Vector[Int]](for {
         keys <- Gen.containerOf[List, Int](for {

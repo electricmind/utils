@@ -58,7 +58,7 @@ class TestVectorHASHHash extends FlatSpec with Matchers {
     }
 
     def isOrdered(l: Vector[String]) = l.map(_._1).toList match { case List() => true; case l => l.dropRight(1).zip(l.drop(1)).forall(x => x._1 < x._2) }
-
+/*
     "A clearRandom" should "cut off vector randomly" in {
 
         val vector = VectorHASH("A" -> 1d, "B" -> 1d, "C" -> 1d, "D" -> 1d, "E" -> 1d)
@@ -127,5 +127,5 @@ class TestVectorHASHHash extends FlatSpec with Matchers {
         vector.clearMinors(1) should be(
             VectorHASH("C" -> 4d))
     }
-
+*/
 }

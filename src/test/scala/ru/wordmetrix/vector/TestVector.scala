@@ -10,20 +10,11 @@ import org.scalautils._
 import Tolerance._
 import TripleEquals._
 
-object QuickCheckHeap extends Properties("VectorHASH") {
+abstract class TestVector extends Properties("Vector") {
 
     implicit val accuracy: Double = 0.001
-    implicit val VS = Arbitrary[Vector[Int]](for {
-        keys <- Gen.containerOf[List, Int](for {
-            k <- Gen.choose(0, 10)
-        } yield (k)) map (_.removeDuplicates.take(5).sortBy(x => x))
-        values <- Gen.containerOf[List, Double](for {
-            k1 <- Gen.choose(accuracy, 100)
-            k2 <- Gen.choose(-100, -accuracy)
-        } yield (k1 + k2))
-    } yield {
-        VectorHASH[Int](keys.zip(values))
-    })
+    implicit def VS: Arbitrary[Vector[Int]]
+    val empty : Vector[Int]
 
     implicit class VectorCheck(v1: Vector[Int]) {
         def compare(v2: Vector[Int])(implicit accuracy: Double) =
@@ -73,12 +64,12 @@ object QuickCheckHeap extends Properties("VectorHASH") {
 
     property("identity of addition") = forAll {
         (v1: Vector[Int]) =>
-            v1 + VectorHASH.empty[Int] == v1
+            v1 + empty == v1
     }
 
     property("inverse item of addition") = forAll {
         (v1: Vector[Int]) =>
-            v1 - v1 == VectorHASH.empty[Int]
+            v1 - v1 == empty
     }
 
     property("multiplication associativity") = forAll {

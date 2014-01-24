@@ -14,6 +14,9 @@ abstract class VectorFactory {
         f
     }
     def apply[F](pairs: (F, Double)*)(implicit ord: Ordering[F]): Vector[F] = apply(pairs.toList)
+
+    def empty[F](
+        implicit ord: Ordering[F]): Vector[F] = factory[F](List[(F, Double)]())
 }
 
 object Vector extends VectorFactory {

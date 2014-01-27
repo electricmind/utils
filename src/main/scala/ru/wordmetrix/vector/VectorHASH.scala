@@ -83,11 +83,18 @@ class VectorHASH[F](val self: HashMap[F, Double])(
     lazy val norm: Double = sqrt(sqr)
     lazy val normal: Vector[F] = this / norm
 
-    //TODO : clearRandomly
-    def clearRandomly(n: Int): VectorHASH[F] = this
+    def clearRandomly(n: Int): VectorHASH[F] =
+        new VectorHASH(scala.util.Random.shuffle(self.keys.toList).drop(n)
+            .foldLeft(self) {
+                case (map, key) => map - key
+            })
 
-    //TODO : clearMinors
-    def clearMinors(n: Int): VectorHASH[F] = this
+    def clearMinors(n: Int): VectorHASH[F] = {
+        new VectorHASH(self.toList.sortBy({ case (x, y) => -abs(y) }).drop(n)
+            .foldLeft(self) {
+                case (map, (key, _)) => map - key
+            })
+    }
 
     def clear(accuracy: Double = accuracy) = new VectorHASH[F](
         (for {

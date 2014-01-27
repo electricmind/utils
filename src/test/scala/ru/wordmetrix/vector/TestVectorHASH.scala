@@ -58,7 +58,7 @@ class TestVectorHASHHash extends FlatSpec with Matchers {
     }
 
     def isOrdered(l: Vector[String]) = l.map(_._1).toList match { case List() => true; case l => l.dropRight(1).zip(l.drop(1)).forall(x => x._1 < x._2) }
-/*
+
     "A clearRandom" should "cut off vector randomly" in {
 
         val vector = VectorHASH("A" -> 1d, "B" -> 1d, "C" -> 1d, "D" -> 1d, "E" -> 1d)
@@ -70,14 +70,6 @@ class TestVectorHASHHash extends FlatSpec with Matchers {
             vector.clearRandomly(2).size should be(2)
             vector.clearRandomly(1).size should be(1)
             vector.clearRandomly(0).size should be(0)
-
-            isOrdered(vector.clearRandomly(6)) should be(true)
-            isOrdered(vector.clearRandomly(5)) should be(true)
-            isOrdered(vector.clearRandomly(4)) should be(true)
-            isOrdered(vector.clearRandomly(3)) should be(true)
-            isOrdered(vector.clearRandomly(2)) should be(true)
-            isOrdered(vector.clearRandomly(1)) should be(true)
-            isOrdered(vector.clearRandomly(0)) should be(true)
         }
     }
 
@@ -105,15 +97,8 @@ class TestVectorHASHHash extends FlatSpec with Matchers {
             vector.clearMinors(2).size should be(2)
             vector.clearMinors(1).size should be(1)
             vector.clearMinors(0).size should be(0)
-
-             isOrdered(vector.clearMinors(6)) should be(true)
-            isOrdered(vector.clearMinors(5)) should be(true)
-            isOrdered(vector.clearMinors(4)) should be(true)
-            isOrdered(vector.clearMinors(3)) should be(true)
-            isOrdered(vector.clearMinors(2)) should be(true)
-            isOrdered(vector.clearMinors(1)) should be(true)
-            isOrdered(vector.clearMinors(0)) should be(true)
         }
+          
         val vector = VectorHASH("A" -> 2d, "B" -> 1.1d,
             "C" -> 4d, "D" -> -3d, "E" -> -1d)
         vector.clearMinors(5) should be(
@@ -127,5 +112,4 @@ class TestVectorHASHHash extends FlatSpec with Matchers {
         vector.clearMinors(1) should be(
             VectorHASH("C" -> 4d))
     }
-*/
 }

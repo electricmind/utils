@@ -145,6 +145,73 @@ abstract class TestVector extends Properties("Vector") {
 
                 }
         }
+    /*
+     * Clearing
+     */
+
+    property("clearRandom") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(0, v.size)
+    } yield (v, n)) {
+        case (v: Vector[Int], n: Int) =>
+            s"Size is equal $n" |: v.clearRandomly(n).size == n &&
+                (v - v.clearRandomly(n)).size == v.size - n
+    }
+
+    property("clearRandom") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(v.size, v.size * 2)
+    } yield (v, n)) {
+        case (v: Vector[Int], n: Int) =>
+            s"Size is the same" |: v.clearRandomly(n).size == v.size && //
+                (v - v.clearRandomly(n)).size == 0
+    }
+
+    property("clearRandom") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(-10, 0)
+    } yield (v, n)) {
+        case (v: Vector[Int], n: Int) =>
+            (v.clearRandomly(n).size == 0)                
+    }
+    
+    property("clearMinors") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(0, v.size)
+    } yield (v, n)) {
+        case (v: Vector[Int], n: Int) =>
+            s"Size is equal $n" |: v.clearMinors(n).size == n &&
+                (v - v.clearMinors(n)).size == v.size - n
+    }
+
+    property("clearMinors") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(v.size, v.size * 2)
+    } yield (v, n)) {
+        case (v: Vector[Int], n: Int) =>
+            s"Size is the same" |: v.clearMinors(n).size == v.size && //
+                (v - v.clearMinors(n)).size == 0
+    }
+
+    property("clearMinors") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(-10, 0)
+    } yield (v, n)) {
+        case (v: Vector[Int], n: Int) =>
+            (v.clearMinors(n).size == 0)                
+    }
+    
+    property("clearMinors") = forAll(for {
+        v <- VS.arbitrary
+        n <- Gen.choose(1,v.size-1)
+    } yield (v.normal, n)) {
+        case (v: Vector[Int], n: Int) =>
+            
+            val v1 =  v.clearMinors(n)
+            (v1.map(x => abs(x._2)).min >= (v-v1).map(x=>abs(x._2)).max)
+                            
+    }
+
 
 }
 

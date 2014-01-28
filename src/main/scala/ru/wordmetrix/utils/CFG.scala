@@ -77,9 +77,9 @@ object CFG {
         case rkey("central") ::  path :: list =>
             apply(list, cfg.copy(central = Option(new File(path))), seeds)
 
-        case rkey("sampling") :: path :: list =>
+/*        case rkey("sampling") :: path :: list =>
             apply(list, cfg.copy(sampling = new File(path)), seeds)
-
+*/
         case rkey("sigma") :: value :: list =>
             apply(list, cfg.copy(sigma = value.toDouble), seeds)
 
@@ -91,6 +91,9 @@ object CFG {
 
         case rkey("hosts") :: uri :: list =>
             apply(list, cfg.copy(hosts = new URI(uri) :: cfg.hosts), seeds)
+
+        case rkey("allhosts") :: list =>
+            apply(list, cfg.copy(allhosts = true), seeds)
 
         case rkey("with_incomplete") :: list =>
             apply(list, cfg.copy(with_incomplete = true), seeds)
@@ -109,7 +112,7 @@ object CFG {
                 case x                 => new File(cfg.path, x.getPath)
             }
             cfg.copy(
-                sampling = absolute(cfg.sampling),
+ //               sampling = absolute(cfg.sampling),
                 map = absolute(cfg.map),
                 args = cfg.args.reverse
             )
@@ -121,12 +124,12 @@ object CFG {
 */
 case class CFG(
         val path: File = new File("/tmp/webcrawler"),
-        val sampling: File = new File("sampling.lst"),
         val map: File = new File("map.lst"),
         val central: Option[File] = None,
         val isdebug: Boolean = false,
         val ish2p: Boolean = false,
         val ishtml: Boolean = false,
+        val allhosts: Boolean = false,
         val servers: Int = 2,
         val rectify :Int = 5,
         val rectify_inline :Int = 2,
@@ -146,6 +149,7 @@ case class CFG(
     lazy val seeds = args.map(x => new URI(x))
     lazy val files = args.map(x => new File(x))
     lazy val target = central getOrElse files.head
+    lazy val sampling: File = new File(path, "sampling.lst")
 }
 
 object debug {

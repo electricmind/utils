@@ -144,15 +144,17 @@ class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
         }) mkString
     }
 
-    def rectify(size: Int = 72) = {
+    def rectify(size: Int = 72) : String = {
+        rectify(wrap(size),size) 
+    }
+    
+    def rectify(page : String, size: Int) : String = {
         def rectify(ins: List[String], ous: List[String] = List()): List[String] =
             ins match {
                 case "" :: "" :: ins       => rectify("" :: ins, ous)
                 case s :: ins              => rectify(ins, s :: ous)
                 case "" :: List() | List() => ous
             }
-        println(wrap(size).split("\n").map(_.trimRight).toList)
-        rectify(wrap(size).split("\n").map(_.trimRight).toList).mkString("\n")
+        rectify(page.split("\n").map(_.trimRight).toList).mkString("\n")
     }
-
 }

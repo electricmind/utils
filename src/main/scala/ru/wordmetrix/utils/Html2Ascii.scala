@@ -153,7 +153,7 @@ class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
             ins match {
                 case "" :: "" :: ins       => rectify("" :: ins, ous)
                 case s :: ins              => rectify(ins, s :: ous)
-                case "" :: List() | List() => ous
+                case "" :: List() | List() => ous.reverse
             }
         rectify(page.split("\n").map(_.trimRight).toList).mkString("\n")
     }

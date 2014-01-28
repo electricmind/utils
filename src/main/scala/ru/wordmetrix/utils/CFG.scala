@@ -60,7 +60,6 @@ object CFG {
 
         case rkey("wordlen") :: value :: list =>
             apply(list, cfg.copy(wordlen = value.toInt), seeds)
-
             
         case rkey("wordfreq") :: value :: list =>
             apply(list, cfg.copy(wordfreq = value.toInt), seeds)
@@ -98,7 +97,7 @@ object CFG {
             apply(list, cfg, seeds)
         }
 
-        case with_incomplete :: list =>
+        case rkey("with_incomplete") :: list =>
             apply(list, cfg.copy(with_incomplete = true), seeds)
 
         case arg :: list =>

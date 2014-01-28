@@ -1,22 +1,20 @@
 package ru.wordmetrix.utils
 
-import java.io.{CharArrayReader, InputStream}
+import java.io.{ CharArrayReader, InputStream }
 import java.net.URI
-
 import scala.Array.canBuildFrom
 import scala.util.Random
 import scala.xml.parsing.NoBindingFactoryAdapter
-
 import org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl
 import org.xml.sax.InputSource
-
 import impl.StringEx
+import scala.util.matching.Regex
 
 object Html2Ascii {
     def apply(page: scala.xml.NodeSeq) = {
         new Html2Ascii(page)
     }
-/*
+
     def main(args: Array[String]) = for (arg <- args) {
         import scala.xml.parsing.NoBindingFactoryAdapter
         import org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl
@@ -30,8 +28,7 @@ object Html2Ascii {
             case _ => println("Unexpected MimeType")
         }
     }
-    
-    */
+
 }
 
 class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
@@ -144,17 +141,26 @@ class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
         }) mkString
     }
 
-    def rectify(size: Int = 72) : String = {
-        rectify(wrap(size),size) 
+    def rectify(size: Int = 72): String = {
+        rectify(wrap(size), size)
     }
-    
-    def rectify(page : String, size: Int) : String = {
+
+    def rectify(page: String, size: Int): String = {
+        implicit class Regex(sc: StringContext) {
+            def r = new util.matching.Regex(
+                    sc.parts.mkString, sc.parts.tail.map(_ => "x"): _*)
+        }
+
         def rectify(ins: List[String], ous: List[String] = List()): List[String] =
             ins match {
                 case "" :: "" :: ins       => rectify("" :: ins, ous)
                 case s :: ins              => rectify(ins, s :: ous)
                 case "" :: List() | List() => ous.reverse
             }
-        rectify(page.split("\n").map(_.trimRight).toList).mkString("\n")
+
+        rectify(page.split("\n").map(_.trimRight).toList.filterNot({
+            case r"^\s*-\s*$$" => true
+            case s => false
+        })).mkString("\n")
     }
 }

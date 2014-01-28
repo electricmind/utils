@@ -90,10 +90,16 @@ object CFG {
         case rkey("cache") :: path :: list =>
             apply(list, cfg.copy(cache = new File(path)), seeds)
 
+        case rkey("hosts") :: uri :: list =>
+            apply(list, cfg.copy(hosts = new URI(uri) :: cfg.hosts), seeds)
+
         case rkey(x) :: list => {
             println("Unknown key %s".format(x))
             apply(list, cfg, seeds)
         }
+
+        case with_incomplete :: list =>
+            apply(list, cfg.copy(with_incomplete = true), seeds)
 
         case arg :: list =>
             apply(list, cfg.copy(args = arg :: cfg.args), seeds)
@@ -134,6 +140,8 @@ case class CFG(
         val wordfreq: Int = 5,
         val f2u: CFG.F2U.Value = CFG.F2U.Simple,
         val cache: File = new File("/tmp/webgetcache"),
+        val hosts: List[URI] = List(),
+        val with_incomplete : Boolean = false,
         val args: List[String] = List()) {
 
     lazy val seeds = args.map(x => new URI(x))

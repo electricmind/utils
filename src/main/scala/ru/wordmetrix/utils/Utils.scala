@@ -4,6 +4,10 @@ import java.net.URI
 import scala.util.matching.Regex.Match
 
 object impl {
+    implicit class StringEx(s : String)  {
+        def trimLeft = s.split("").dropWhile(_ == " ").mkString("")
+        def trimRight = s.reverse.trimLeft.reverse
+    }
     implicit class URIEx(uri : URI) {
         def toFilename = """[/:_\-\\]""".r.replaceAllIn(
         """https?://""".r.replaceFirstIn(uri.toString, ""), x => x match {

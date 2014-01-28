@@ -1,16 +1,37 @@
 package ru.wordmetrix.utils
+
+import java.io.{CharArrayReader, InputStream}
+import java.net.URI
+
+import scala.Array.canBuildFrom
+import scala.util.Random
+import scala.xml.parsing.NoBindingFactoryAdapter
+
 import org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl
 import org.xml.sax.InputSource
-import scala.xml.parsing.NoBindingFactoryAdapter
-import java.io.CharArrayReader
-import scala.util.Random
-import scala.Array.canBuildFrom
-import scala.xml.NodeSeq.seqToNodeSeq
+
+import impl.StringEx
 
 object Html2Ascii {
     def apply(page: scala.xml.NodeSeq) = {
         new Html2Ascii(page)
     }
+/*
+    def main(args: Array[String]) = for (arg <- args) {
+        import scala.xml.parsing.NoBindingFactoryAdapter
+        import org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl
+        import org.xml.sax.InputSource
+        new URI(arg).toURL.getContent() match {
+            case in: InputStream =>
+                val xml = (new NoBindingFactoryAdapter).loadXML(
+                    new InputSource(in),
+                    new SAXFactoryImpl().newSAXParser())
+                println(Html2Ascii(xml).rectify())
+            case _ => println("Unexpected MimeType")
+        }
+    }
+    
+    */
 }
 
 class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
@@ -95,9 +116,9 @@ class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
             } mkString
 
             case <ol>{ li @ _* }</ol> => li.zipWithIndex.map {
-                case (<li>{ nodes @ _* }</li>, i) => 
+                case (<li>{ nodes @ _* }</li>, i) =>
                     "\n " + i + " " + dump(nodes) + "\n"
-                case (node, i)                    => 
+                case (node, i) =>
                     dump(node)
             } mkString
 
@@ -122,4 +143,16 @@ class Html2Ascii(page: scala.xml.NodeSeq, debug: Boolean = false) {
                 ""
         }) mkString
     }
+
+    def rectify(size: Int = 72) = {
+        def rectify(ins: List[String], ous: List[String] = List()): List[String] =
+            ins match {
+                case "" :: "" :: ins       => rectify("" :: ins, ous)
+                case s :: ins              => rectify(ins, s :: ous)
+                case "" :: List() | List() => ous
+            }
+        println(wrap(size).split("\n").map(_.trimRight).toList)
+        rectify(wrap(size).split("\n").map(_.trimRight).toList).mkString("\n")
+    }
+
 }

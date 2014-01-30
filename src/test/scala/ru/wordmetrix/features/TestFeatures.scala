@@ -3,7 +3,7 @@ package ru.wordmetrix.features
 import java.net.URI
 import org.scalatest.{ FlatSpec, Matchers, WordSpecLike }
 import ru.wordmetrix.vector.Vector
-import ru.wordmetrix.utils.impl.{ StirngEx, URIEx }
+import ru.wordmetrix.utils.impl.{ URIEx }
 import ru.wordmetrix.utils.CFG
 
 class TestFeatures extends WordSpecLike with Matchers {

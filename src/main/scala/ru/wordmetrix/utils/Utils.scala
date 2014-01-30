@@ -21,7 +21,7 @@ object impl {
             case x => x
         }
     }
-    implicit class StirngEx(s: String) {
+    /*implicit class StirngEx(s: String) {
         def toURI =    new URI("http://" + """---|--|___|__""".r.replaceAllIn(
             s,
             x => x match {
@@ -31,5 +31,5 @@ object impl {
                 case Match("___") => "_"
             }
         ))
-    }
+    }*/
 }

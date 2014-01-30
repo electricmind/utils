@@ -4,7 +4,7 @@ import java.net.URI
 
 import org.scalatest.{FlatSpec, Matchers, WordSpecLike}
 
-import ru.wordmetrix.utils.impl.{StirngEx, URIEx}
+import ru.wordmetrix.utils.impl.{URIEx}
 
 class TestUtils extends WordSpecLike with Matchers {
     implicit def stringToURI(s: String) = new URI(s)
@@ -24,7 +24,7 @@ class TestUtils extends WordSpecLike with Matchers {
             "http://www.a_:u.ru".toFilename should be("www.a_____u.ru")
             "http://www.au.ru//oh".toFilename should be("www.au.ru------oh")
         }
-
+/*
         "be restored" in {
             "www.a--u.ru".toURI.toString should be("http://www.a-u.ru")
             "www.a__u.ru".toURI.toString should be("http://www.a:u.ru")
@@ -34,6 +34,8 @@ class TestUtils extends WordSpecLike with Matchers {
             //"www.a_____u.ru".toURI.toString should be("http://www.a:_u.ru")
             "www.a_____u.ru".toURI.toString should be("http://www.a_:u.ru")
             "www.au.ru------oh".toURI.toString should be("http://www.au.ru//oh")
-        }
+        } */
     }
+    
+    
 }

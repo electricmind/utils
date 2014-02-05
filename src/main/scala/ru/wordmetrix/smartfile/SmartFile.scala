@@ -28,7 +28,7 @@ object SmartFile {
 abstract trait SmartFileOperations {
     val inputstream: InputStream
     val outputstream: OutputStream
-    val writer : Writer
+    val writer: Writer
 
     def write(ss: Traversable[String]): Unit =
         write(ss.mkString("\n"))
@@ -44,7 +44,6 @@ abstract trait SmartFileOperations {
         fn.write(a)
         fn.close()
     }
-
 
     def read() = {
         val fin = inputstream
@@ -71,7 +70,6 @@ abstract trait SmartFileOperations {
     def readLines() = io.Source.fromInputStream(inputstream).getLines
 
     def copyTo(foutname: SmartFile) = {
-        //println("%s -> %s".format(file, foutname))
         foutname.write(this.read())
     }
 
@@ -87,10 +85,12 @@ abstract class SmartFileBase(val file: File) {
     def /(f: Int) = new SmartFile(new File(file, f.toString))
     def /(f: File) = new SmartFile(new File(file, f.toString))
 
-    lazy val outputstream = {
+    lazy val preparefile = {
         file.getParentFile().mkdirs() //    path.mkdirs()
-        new FileOutputStream(file)
+        file
     }
+
+    lazy val outputstream = new FileOutputStream(preparefile)
 
     val writer: FileWriter
     //    def reader = new FileReader(file)
@@ -105,10 +105,10 @@ abstract class SmartFileBase(val file: File) {
 
 class SmartFileAppend(file: File)
         extends SmartFileBase(file) with SmartFileOperations {
-    val writer = new FileWriter(file, true)
+    val writer = new FileWriter(preparefile, true)
 }
 
 class SmartFile(file: File)
         extends SmartFileBase(file) with SmartFileOperations {
-    lazy val writer = new FileWriter(file)
+    lazy val writer = new FileWriter(preparefile)
 }

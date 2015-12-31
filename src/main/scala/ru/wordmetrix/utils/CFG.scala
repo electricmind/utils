@@ -3,6 +3,7 @@ package ru.wordmetrix.utils
 import java.io.File
 
 import java.net.URI
+import ru.wordmetrix.smartfile.SmartFile.fromFile
 /*
  * CFG: Object that holds a set of the parameters of current session.
  */
@@ -27,8 +28,8 @@ object CFG {
             scala.sys.exit
             apply(list, cfg, seeds)
 
-        case rkey("map") :: file :: list =>
-            apply(list, cfg.copy(map = new File(file), f2u = F2U.Map), seeds)
+//        case rkey("map") :: file :: list =>
+  //          apply(list, cfg.copy(map = new File(file), f2u = F2U.Map), seeds)
 
         case rkey("f2u") :: f2u :: list =>
             apply(list, cfg.copy(f2u = f2u match {
@@ -97,7 +98,10 @@ object CFG {
 
         case rkey("with_incomplete") :: list =>
             apply(list, cfg.copy(with_incomplete = true), seeds)
-
+            
+        case rkey("use_breadthsearch") :: list =>
+            apply(list, cfg.copy(use_breadthsearch = true), seeds)
+            
         case rkey(x) :: list => {
             println("Unknown key %s".format(x))
             apply(list, cfg, seeds)
@@ -113,7 +117,7 @@ object CFG {
             }
             cfg.copy(
  //               sampling = absolute(cfg.sampling),
-                map = absolute(cfg.map),
+                //map = absolute(cfg.map),
                 args = cfg.args.reverse
             )
     }
@@ -124,7 +128,7 @@ object CFG {
 */
 case class CFG(
         val path: File = new File("/tmp/webcrawler"),
-        val map: File = new File("map.lst"),
+        //val map: File = new File("map.lst"),
         val central: Option[File] = None,
         val isdebug: Boolean = false,
         val ish2p: Boolean = false,
@@ -145,8 +149,10 @@ case class CFG(
         val hosts: List[URI] = List(),
         val with_incomplete : Boolean = false,
         val accuracy: Double = 0.0001,
+        val use_breadthsearch : Boolean = false,
         val args: List[String] = List()) {
 
+    lazy val map = this.path / "map.lst"
     lazy val seeds = args.map(x => new URI(x))
     lazy val files = args.map(x => new File(x))
     lazy val target = central getOrElse files.head

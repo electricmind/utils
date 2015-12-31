@@ -144,6 +144,7 @@ case class CFG(
         val cache: File = new File("/tmp/webgetcache"),
         val hosts: List[URI] = List(),
         val with_incomplete : Boolean = false,
+        val accuracy: Double = 0.0001,
         val args: List[String] = List()) {
 
     lazy val seeds = args.map(x => new URI(x))

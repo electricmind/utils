@@ -4,6 +4,9 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
 class TestVectorList extends FlatSpec with Matchers {
+
+    implicit val accuracy: Double = 0.0001
+
     "A vector" should "be created" in {
         VectorList(("A", 1d))
     }

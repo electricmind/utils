@@ -5,23 +5,25 @@ import scala.collection.Traversable
 
 abstract class VectorFactory {
     def factory[F](list: List[(F, Double)])(
-        implicit ord: Ordering[F]): Vector[F]
+        implicit accuracy: Double, ord: Ordering[F]): Vector[F]
 
-    def apply[F](list: List[(F, Double)])(implicit ord: Ordering[F]): Vector[F] = {
+    def apply[F](list: List[(F, Double)])(implicit accuracy: Double, ord: Ordering[F]): Vector[F] = {
         val f = factory(
             list.groupBy(_._1).map({ case (x, y) => x -> y.map(_._2).sum }).toList.sortBy(_._1)
         )
         f
     }
-    def apply[F](pairs: (F, Double)*)(implicit ord: Ordering[F]): Vector[F] = apply(pairs.toList)
+    def apply[F](pairs: (F, Double)*)(implicit accuracy: Double, ord: Ordering[F]): Vector[F] = apply(pairs.toList)
 
     def empty[F](
-        implicit ord: Ordering[F]): Vector[F] = factory[F](List[(F, Double)]())
+        implicit accuracy: Double, ord: Ordering[F]): Vector[F] = factory[F](List[(F, Double)]())
 }
 
 object Vector extends VectorFactory {
     def factory[F](list: List[(F, Double)])(
-        implicit ord: Ordering[F]): Vector[F] = new VectorList(list)
+        implicit accuracy: Double, ord: Ordering[F]): Vector[F] = new VectorList(list)
+
+
 }
 
 abstract trait Vector[F] extends Traversable[(F, Double)] {

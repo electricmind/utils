@@ -7,7 +7,7 @@ import scala.collection.immutable.MapProxy
 
 object VectorHASH extends VectorFactory {
     def factory[F](list: List[(F, Double)])(
-        implicit ord: Ordering[F]): Vector[F] = {
+        implicit accuracy: Double, ord: Ordering[F]): Vector[F] = {
         val m = list.foldLeft(HashMap[F, Double]()) {
             case (map, item) => map + item
         }

@@ -4,11 +4,11 @@ import scala.math.Ordering.StringOrdering
 import scala.collection.Traversable
 
 object VectorList extends VectorFactory {
-    def factory[F](list: List[(F, Double)])(implicit ord: Ordering[F]): Vector[F] = new VectorList(list)
+    def factory[F](list: List[(F, Double)])(implicit accuracy: Double, ord: Ordering[F]): Vector[F] = new VectorList(list)
 }
 
 class VectorList[F](val self: List[(F, Double)])(
-    implicit accuracy: Double = 0.0001,
+    implicit accuracy: Double,
     ord: Ordering[F]) extends TraversableProxy[(F, Double)]
         with Serializable with Vector[F] {
     type Pair = (F, Double)

@@ -4,6 +4,9 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
 class TestVectorHASHHash extends FlatSpec with Matchers {
+
+    implicit val accuracy: Double = 0.0001
+
     "A vector" should "be created" in {
         println("1")
         VectorHASH(("A", 1d))

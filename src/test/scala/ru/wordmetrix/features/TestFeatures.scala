@@ -9,6 +9,9 @@ import ru.wordmetrix.utils.CFG
 class TestFeatures extends WordSpecLike with Matchers {
     implicit val cfg = CFG(wordlen = 0, wordfreq = 0)
 
+    implicit val accuracy: Double = 0.0001
+
+
     import Features._
 
     val words = List("He", "eagery", "advance", "to", "more", "sophisticated",

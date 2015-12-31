@@ -47,13 +47,17 @@ object Features {
     def fromText(s: String,
                  index: String2Word[String, Double] = String2Word[String, Double]())(implicit cfg: CFG) =
        index.encode(split(s)) match {
-        case (x,y) => (Vector(x.toList), y)
+        case (x,y) => (Vector(x.toList)(accuracy=cfg.accuracy, ord = Implicitly[Ordering[Int]]), y)
     }
 
-    def fromText(s: String)(implicit cfg: CFG) = Vector(split(s))
+    def fromText(s: String)(implicit cfg: CFG) = Vector(split(s))(accuracy=cfg.accuracy, ord = Implicitly[Ordering[String]])
 
     def fromText(sf: SmartFile)(implicit cfg: CFG): Vector[String] =
         fromText(sf.readLines.mkString("\n"))
+}
+
+object Implicitly {
+    def apply[F](implicit impl: F) = impl
 }
 
 class IndexedFeatures[F](val map : Map[F,Int], val remap : Map[Int,F]) {

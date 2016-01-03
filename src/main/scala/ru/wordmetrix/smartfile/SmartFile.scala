@@ -87,7 +87,9 @@ abstract class SmartFileBase(val file: File) {
     def /(f: File) = new SmartFile(new File(file, f.toString))
 
     lazy val preparefile = {
-        file.getParentFile().mkdirs() //    path.mkdirs()
+        Option(file.getParentFile()) foreach {
+          _.mkdirs()
+        }
         file
     }
 

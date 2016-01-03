@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Writer
+import scala.io.Source
 
 object SmartFile {
 
@@ -67,7 +68,7 @@ abstract trait SmartFileOperations {
             o
     }
 
-    def readLines() = io.Source.fromInputStream(inputstream).getLines
+    def readLines() = Source.fromInputStream(inputstream).getLines
 
     def copyTo(foutname: SmartFile) = {
         foutname.write(this.read())

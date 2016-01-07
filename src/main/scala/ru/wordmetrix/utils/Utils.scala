@@ -1,35 +1,40 @@
 package ru.wordmetrix.utils
 
 import java.net.URI
+
 import scala.util.matching.Regex.Match
 
 object impl {
-    implicit class StringEx(s : String)  {
-        def trimLeft = s.split("").dropWhile(_ == " ").mkString("")
-        def trimRight = s.reverse.trimLeft.reverse
+
+  implicit class StringEx(s: String) {
+    def trimLeft = s.split("").dropWhile(_ == " ").mkString("")
+
+    def trimRight = s.reverse.trimLeft.reverse
+  }
+
+  implicit class URIEx(uri: URI) {
+    def toFilename = """[/:_\-\\]""".r.replaceAllIn(
+      """https?://""".r.replaceFirstIn(uri.toString, ""), x => x match {
+        case Match("/") => "---"
+        case Match("-") => "--"
+        case Match(":") => "__"
+        case Match("_") => "___"
+      }) match {
+      case x if x.length > 120 => x.slice(0, 120) +
+        x.slice(0, 120).hashCode.toString
+      case x => x
     }
-    implicit class URIEx(uri : URI) {
-        def toFilename = """[/:_\-\\]""".r.replaceAllIn(
-        """https?://""".r.replaceFirstIn(uri.toString, ""), x => x match {
-            case Match("/") => "---"
-            case Match("-") => "--"
-            case Match(":") => "__"
-            case Match("_") => "___"
-        }) match {
-            case x if x.length > 120 => x.slice(0, 120) +
-            x.slice(0, 120).hashCode.toString
-            case x => x
-        }
-    }
-    /*implicit class StirngEx(s: String) {
-        def toURI =    new URI("http://" + """---|--|___|__""".r.replaceAllIn(
-            s,
-            x => x match {
-                case Match("---") => "/"
-                case Match("--")  => "-"
-                case Match("__")  => ":"
-                case Match("___") => "_"
-            }
-        ))
-    }*/
+  }
+
+  /*implicit class StirngEx(s: String) {
+      def toURI =    new URI("http://" + """---|--|___|__""".r.replaceAllIn(
+          s,
+          x => x match {
+              case Match("---") => "/"
+              case Match("--")  => "-"
+              case Match("__")  => ":"
+              case Match("___") => "_"
+          }
+      ))
+  }*/
 }

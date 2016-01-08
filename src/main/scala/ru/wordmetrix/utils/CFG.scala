@@ -3,6 +3,10 @@ package ru.wordmetrix.utils
 import java.io.File
 import java.net.URI
 
+import ru.wordmetrix.features.Features
+
+import scala.util.matching.Regex
+
 /*
  * CFG: Object that holds a set of the parameters of current session.
  */
@@ -18,10 +22,7 @@ object CFG {
 
   def apply(list: List[String]): CFG = apply(list, CFG(), List())
 
-  def apply(list: List[String], cfg: CFG, // = CFG(),
-            seeds: List[URI] // = List()
-             ): CFG = list match {
-
+  def apply(list: List[String], cfg: CFG, seeds: List[URI]): CFG = list match {
     case rkey("h") :: list =>
       println(cfg)
       scala.sys.exit
@@ -101,6 +102,16 @@ object CFG {
     case rkey("use_breadthsearch") :: list =>
       apply(list, cfg.copy(use_breadthsearch = true), seeds)
 
+    case rkey("delimiter") :: delimiter :: list =>
+      apply(list, cfg.copy(delimiter = delimiter match {
+        case "inter" => Features.delimiter
+        case "en" => Features.delimiterEn
+        case delimeter => delimeter.r
+      }), seeds)
+
+    case rkey("delimiter-inter") :: list =>
+      apply(list, cfg.copy(delimiter = Features.delimiter), seeds)
+
     case rkey(x) :: list => {
       println("Unknown key %s".format(x))
       apply(list, cfg, seeds)
@@ -148,6 +159,7 @@ case class CFG(
                 val with_incomplete: Boolean = false,
                 val accuracy: Double = 0.0001,
                 val use_breadthsearch: Boolean = false,
+                val delimiter: Regex = Features.delimiter,
                 val sampling: File = new File("sampling.lst"),
                 val args: List[String] = List()) {
 

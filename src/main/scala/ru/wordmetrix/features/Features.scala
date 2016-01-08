@@ -6,12 +6,13 @@ import ru.wordmetrix.vector.Vector
 
 object Features {
 
-  val delimiter = "\\W+".r
+  val delimiterEn = "\\W+".r
+  val delimiter = """[^\p{L}]+""".r
 
   def split(s: String)(implicit cfg: CFG) = {
     for {
       (x, ys) <- (for {
-        word <- delimiter.split(s)
+        word <- cfg.delimiter.split(s)
         if word.length > cfg.wordlen
       } yield word).groupBy(x => x.toLowerCase())
       y <- Some(ys.toList.length.toDouble)
